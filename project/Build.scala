@@ -44,36 +44,6 @@ object Build extends sbt.Build {
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
     .settings(pomExtra := mavenInfos)
-    .settings(test <<= (publishLocal, baseDirectory, version) map { (_, baseDirectory, pluginVersion) =>
-      val testSbts = (baseDirectory / "src/sbt-test").listFiles
-      testSbts.foreach { testSbt =>
-        IO.withTemporaryDirectory { baseDir =>
-          val projectDir = baseDir / "project"
-          baseDir.mkdirs()
-          projectDir.mkdirs()
-
-          IO.write(baseDir / "build.sbt",
-            """|import de.choffmeister.sbt.JarsPlugin._
-               |
-               |%s
-               |
-               |jarsSettings""".stripMargin.format(IO.read(testSbt)))
-
-          IO.write(projectDir / "build.properties",
-            """|sbt.version=0.13.6
-               |""".stripMargin)
-
-          IO.write(projectDir / "plugins.sbt",
-            """|addSbtPlugin("de.choffmeister" %% "sbt-jars" %% "%s")
-               |""".stripMargin.format(pluginVersion))
-
-          Process("sbt" ::
-            "show jars-runtime" ::
-            "show jars-dependencies" ::
-            "show jars-all" :: Nil, baseDir) !
-        }
-      }
-    })
     .settings(
       name := "sbt-jars",
       organization := "de.choffmeister",
