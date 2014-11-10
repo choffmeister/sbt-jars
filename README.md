@@ -1,4 +1,4 @@
-# sbt-jars
+# sbt-jars [![Build Status](https://travis-ci.org/choffmeister/sbt-jars.svg?branch=develop)](https://travis-ci.org/choffmeister/sbt-jars)
 
 This plugin provides `TaskKeys` to gather together all needed JARs (compiled, dependencies and unmanaged) for an project. The intention for this plugin is to be used by other plugins.
 
