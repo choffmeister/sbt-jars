@@ -36,6 +36,8 @@ class VersionStringSpec extends Specification {
       VersionString("1.2.4") must be_>(VersionString("1.2.3.4"))
       VersionString("1.2.3.4.5") must be_>(VersionString("1.2.3.4"))
 
+      VersionString("2.9.2") must be_<(VersionString("2.10.4"))
+
       VersionString("1.2") must be_>(VersionString("1.2-alpha"))
       VersionString("1.2-beta") must be_>(VersionString("1.2-alpha"))
 
