@@ -1,1 +1,2 @@
-> jars-all
+> check-jars-runtime
+> check-jars-dependencies
