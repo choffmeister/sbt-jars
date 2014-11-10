@@ -4,6 +4,8 @@ import sbt._
 import sbt.Keys._
 
 object JarsPlugin extends Plugin {
+  implicit def versionOrdering = DefaultVersionStringOrdering
+
   val jarsExcludeProjects = SettingKey[Seq[String]]("jars-exclude-projects")
   val jarsDuplicatedStrategy = SettingKey[DuplicatedJarStrategy]("jars-duplicated-strategy")
   val jarsUpdateReports = TaskKey[Seq[(UpdateReport, ProjectRef)]]("jars-update-reports")
@@ -37,15 +39,16 @@ object JarsPlugin extends Plugin {
       val distinctDependentJars = dependentJars
         .groupBy(_.noVersionJarName)
         .map {
-          case (key, entry :: Nil) => entry
+          case (key, entries) if entries.groupBy(_.version).size == 1 => entries.head
           case (key, entries) =>
+            val versions = entries.groupBy(_.version).map(_._1).toList.sorted
             duplicateStrategy match {
               case DuplicatedJarStrategies.Latest =>
-                val latest = entries.sortBy(_.version)(DefaultVersionStringOrdering).last
-                streams.log.warn(s"Version conflict on $key. Using $latest (found $entries)")
+                val latest = entries.sortBy(_.version).last
+                streams.log.warn(s"Version conflict on $key. Using ${latest.version} (found ${versions.mkString(", ")})")
                 latest
               case DuplicatedJarStrategies.Error =>
-                sys.error(s"Version conflict on $key (found $entries)")
+                sys.error(s"Version conflict on $key (found ${versions.mkString(", ")})")
                 ???
             }
         }
