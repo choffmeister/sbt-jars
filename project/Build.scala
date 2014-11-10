@@ -14,7 +14,7 @@ object Build extends sbt.Build {
       if (isSnapshot.value)
         Some("snapshots" at nexus + "content/repositories/snapshots")
       else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"))
 
@@ -42,6 +42,8 @@ object Build extends sbt.Build {
   lazy val root = (project in file("."))
     .settings(Defaults.defaultSettings: _*)
     .settings(buildSettings: _*)
+    .settings(libraryDependencies ++= Seq(
+      "org.specs2" %% "specs2" % "2.4.1" % "test"))
     .settings(publishSettings: _*)
     .settings(pomExtra := mavenInfos)
     .settings(

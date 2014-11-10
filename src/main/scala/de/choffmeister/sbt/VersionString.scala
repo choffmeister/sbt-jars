@@ -29,11 +29,11 @@ object VersionStringOrdering extends Ordering[VersionString] {
   override def compare(a: VersionString, b: VersionString): Int = {
     def compareNumberSequence(ns1: Seq[Int], ns2: Seq[Int]): Int = (ns1, ns2) match {
       case (Nil, Nil) => 0
-      case (n1 :: tail1, Nil) => -1
-      case (Nil, n2 :: tail2) => +1
+      case (n1 :: tail1, Nil) => +1
+      case (Nil, n2 :: tail2) => -1
       case (n1 :: tail1, n2 :: tail2) =>
-        if (n1 < n2) +1
-        else if (n1 > n2) -1
+        if (n1 < n2) -1
+        else if (n1 > n2) +1
         else compareNumberSequence(tail1, tail2)
     }
 
@@ -42,11 +42,11 @@ object VersionStringOrdering extends Ordering[VersionString] {
       case 0 =>
         (a.suffix, b.suffix) match {
           case (None, None) => 0
-          case (Some(s1), None) => +1
-          case (None, Some(s2)) => -1
+          case (Some(s1), None) => -1
+          case (None, Some(s2)) => +1
           case (Some(s1), Some(s2)) =>
-            if (s1 < s2) +1
-            else if (s1 > s2) -1
+            if (s1 < s2) -1
+            else if (s1 > s2) +1
             else 0
         }
     }
