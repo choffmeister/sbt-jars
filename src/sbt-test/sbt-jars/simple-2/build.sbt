@@ -9,7 +9,7 @@ libraryDependencies ++= Seq(
 )
 
 TaskKey[Unit]("check-jars-runtime") <<= (jarsRuntime) map { (jars) =>
-  assert(jars.map(_._1.getName) == "simple2_2.10-0.1.2.jar" :: Nil)
+  assert(jars.map(_._1.getName) == "simple-2_2.10-0.1.2.jar" :: Nil)
 }
 
 TaskKey[Unit]("check-jars-dependencies") <<= (jarsDependencies) map { (jars) =>
