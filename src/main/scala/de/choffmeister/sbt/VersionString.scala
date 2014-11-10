@@ -25,7 +25,7 @@ object VersionString {
   }
 }
 
-object VersionStringOrdering extends Ordering[VersionString] {
+object DefaultVersionStringOrdering extends Ordering[VersionString] {
   override def compare(a: VersionString, b: VersionString): Int = {
     def compareNumberSequence(ns1: Seq[Int], ns2: Seq[Int]): Int = (ns1, ns2) match {
       case (Nil, Nil) => 0

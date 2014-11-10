@@ -3,7 +3,7 @@ package de.choffmeister.sbt
 import org.specs2.mutable.Specification
 
 class VersionStringSpec extends Specification {
-  implicit val ordering = VersionStringOrdering
+  implicit val versionStringOrdering = DefaultVersionStringOrdering
 
   "VersionString" should {
     "accept any string" in {

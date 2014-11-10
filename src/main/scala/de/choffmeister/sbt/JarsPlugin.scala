@@ -41,7 +41,7 @@ object JarsPlugin extends Plugin {
           case (key, entries) =>
             duplicateStrategy match {
               case DuplicatedJarStrategies.Latest =>
-                val latest = entries.sortBy(_.version)(VersionStringOrdering).last
+                val latest = entries.sortBy(_.version)(DefaultVersionStringOrdering).last
                 streams.log.warn(s"Version conflict on $key. Using $latest (found $entries)")
                 latest
               case DuplicatedJarStrategies.Error =>
