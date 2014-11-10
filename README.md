@@ -1,15 +1,13 @@
-# sbt-jars [![Build Status](https://travis-ci.org/choffmeister/sbt-jars.svg?branch=develop)](https://travis-ci.org/choffmeister/sbt-jars)
+# sbt-jars [![Build Status](https://travis-ci.org/choffmeister/sbt-jars.svg?branch=master)](https://travis-ci.org/choffmeister/sbt-jars)
 
 This plugin provides `TaskKeys` to gather together all needed JARs (compiled, dependencies and unmanaged) for an project. The intention for this plugin is to be used by other plugins.
 
 ## Usage
 
-To use this plugin in your own plugin, add the following lines to your plugins `build.sbt` file:
+To use this plugin in your own plugin, add the following line to your plugins `build.sbt` file:
 
 ~~~ scala
-resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
-
-addSbtPlugin("de.choffmeister" % "sbt-jars" % "0.0.1-SNAPSHOT")
+addSbtPlugin("de.choffmeister" % "sbt-jars" % "0.0.1")
 ~~~
 
 ## License
