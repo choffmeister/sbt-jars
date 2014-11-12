@@ -49,7 +49,6 @@ object JarsPlugin extends Plugin {
                 latest
               case DuplicatedJarStrategies.Error =>
                 sys.error(s"Version conflict on $key (found ${versions.mkString(", ")})")
-                ???
             }
         }
         .toSeq
