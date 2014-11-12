@@ -4,7 +4,11 @@ import sbt._
 import sbt.Keys._
 
 object JarsPlugin extends Plugin {
-  implicit def versionOrdering = DefaultVersionStringOrdering
+  private val defaultVersionOrdering = new Ordering[String] {
+    override def compare(a: String, b: String): Int = {
+      DefaultVersionStringOrdering.compare(VersionString(a), VersionString(b))
+    }
+  }
 
   val jarsExcludeProjects = SettingKey[Seq[String]]("jars-exclude-projects")
   val jarsDuplicatedStrategy = SettingKey[DuplicatedJarStrategy]("jars-duplicated-strategy")
@@ -16,7 +20,7 @@ object JarsPlugin extends Plugin {
 
   lazy val jarsSettings = Seq[Def.Setting[_]](
     jarsExcludeProjects := Seq.empty,
-    jarsDuplicatedStrategy := DuplicatedJarStrategies.Latest,
+    jarsDuplicatedStrategy := DuplicatedJarStrategies.Latest(defaultVersionOrdering),
     jarsUpdateReports <<= (thisProjectRef, buildStructure, jarsExcludeProjects) flatMap getFromSelectedProjects(update),
     jarsRuntime <<= (thisProjectRef, buildStructure, jarsExcludeProjects) flatMap getFromSelectedProjects(packageBin in Runtime),
     jarsDependencies <<= (streams, jarsUpdateReports, jarsDuplicatedStrategy) map { (streams, updates, duplicateStrategy) =>
@@ -30,7 +34,7 @@ object JarsPlugin extends Plugin {
           JarEntry(
             m.module.organization,
             m.module.name,
-            VersionString(m.module.revision),
+            m.module.revision,
             artifact.classifier,
             file.getName,
             projectRef,
@@ -41,10 +45,10 @@ object JarsPlugin extends Plugin {
         .map {
           case (key, entries) if entries.groupBy(_.version).size == 1 => entries.head
           case (key, entries) =>
-            val versions = entries.groupBy(_.version).map(_._1).toList.sorted
+            val versions = entries.groupBy(_.version).map(_._1).toList
             duplicateStrategy match {
-              case DuplicatedJarStrategies.Latest =>
-                val latest = entries.sortBy(_.version).last
+              case DuplicatedJarStrategies.Latest(ordering) =>
+                val latest = entries.sortBy(_.version)(ordering).last
                 streams.log.warn(s"Version conflict on $key. Using ${latest.version} (found ${versions.mkString(", ")})")
                 latest
               case DuplicatedJarStrategies.Error =>
@@ -79,7 +83,7 @@ object JarsPlugin extends Plugin {
   case class JarEntry(
       organization: String,
       name: String,
-      version: VersionString,
+      version: String,
       classifier: Option[String],
       originalFileName: String,
       projectRef: ProjectRef,
@@ -93,7 +97,7 @@ object JarsPlugin extends Plugin {
 
   sealed trait DuplicatedJarStrategy
   object DuplicatedJarStrategies {
-    case object Latest extends DuplicatedJarStrategy
+    case class Latest(ordering: Ordering[String]) extends DuplicatedJarStrategy
     case object Error extends DuplicatedJarStrategy
   }
 }
