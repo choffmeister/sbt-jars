@@ -4,12 +4,6 @@ import sbt._
 import sbt.Keys._
 
 object JarsPlugin extends Plugin {
-  private val defaultVersionOrdering = new Ordering[String] {
-    override def compare(a: String, b: String): Int = {
-      DefaultVersionStringOrdering.compare(VersionString(a), VersionString(b))
-    }
-  }
-
   val jarsExcludeProjects = SettingKey[Seq[String]]("jars-exclude-projects")
   val jarsDuplicatedStrategy = SettingKey[DuplicatedJarStrategy]("jars-duplicated-strategy")
   val jarsUpdateReports = TaskKey[Seq[(UpdateReport, ProjectRef)]]("jars-update-reports")
@@ -20,7 +14,7 @@ object JarsPlugin extends Plugin {
 
   lazy val jarsSettings = Seq[Def.Setting[_]](
     jarsExcludeProjects := Seq.empty,
-    jarsDuplicatedStrategy := DuplicatedJarStrategies.Latest(defaultVersionOrdering),
+    jarsDuplicatedStrategy := DuplicatedJarStrategies.Latest(DefaultVersionStringOrdering.asStringOrdering),
     jarsUpdateReports <<= (thisProjectRef, buildStructure, jarsExcludeProjects) flatMap getFromSelectedProjects(update),
     jarsRuntime <<= (thisProjectRef, buildStructure, jarsExcludeProjects) flatMap getFromSelectedProjects(packageBin in Runtime),
     jarsDependencies <<= (streams, jarsUpdateReports, jarsDuplicatedStrategy) map { (streams, updates, duplicateStrategy) =>

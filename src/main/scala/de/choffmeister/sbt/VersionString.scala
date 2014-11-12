@@ -51,4 +51,10 @@ object DefaultVersionStringOrdering extends Ordering[VersionString] {
         }
     }
   }
+
+  def asStringOrdering = new Ordering[String] {
+    override def compare(a: String, b: String): Int = {
+      DefaultVersionStringOrdering.compare(VersionString(a), VersionString(b))
+    }
+  }
 }
